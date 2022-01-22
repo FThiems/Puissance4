@@ -352,6 +352,7 @@ void ordijoue_mcts(Etat * etat, int tempsmax) {
 		iter ++;
 	} while ( temps < tempsmax );
 	
+	*/
 	/* fin de l'algorithme  */ 
 	
 	// Jouer le meilleur premier coup
