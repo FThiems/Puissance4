@@ -12,7 +12,7 @@
 #include <time.h>
 
 // Paramètres du jeu
-#define LARGEUR_MAX 9 		// nb max de fils pour un noeud (= nb max de coups possibles)
+#define LARGEUR_MAX 42 		// nb max de fils pour un noeud (= nb max de coups possibles)
 
 #define TEMPS 5		// temps de calcul pour un coup avec MCTS (en secondes)
  
@@ -32,7 +32,7 @@ typedef struct EtatSt {
 	// TODO: à compléter par la définition de l'état du jeu
 
 	/* par exemple, pour morpion: */
-	char plateau[3][3];	
+	char plateau[7][6];	
 
 } Etat;
 
@@ -57,8 +57,8 @@ Etat * copieEtat( Etat * src ) {
 	
 	/* par exemple : */
 	int i,j;	
-	for (i=0; i< 3; i++)
-		for ( j=0; j<3; j++)
+	for (i=0; i< 6; i++)
+		for ( j=0; j<7; j++)
 			etat->plateau[i][j] = src->plateau[i][j];
 	
 
@@ -74,8 +74,8 @@ Etat * etat_initial( void ) {
 	
 	/* par exemple : */
 	int i,j;	
-	for (i=0; i< 3; i++)
-		for ( j=0; j<3; j++)
+	for (i=0; i< 6; i++)
+		for ( j=0; j<7; j++)
 			etat->plateau[i][j] = ' ';
 	
 	return etat;
@@ -89,18 +89,18 @@ void afficheJeu(Etat * etat) {
 	/* par exemple : */
 	int i,j;
 	printf("   |");
-	for ( j = 0; j < 3; j++) 
+	for ( j = 0; j < 7; j++) 
 		printf(" %d |", j);
 	printf("\n");
-	printf("----------------");
+	printf("--------------------------------");
 	printf("\n");
 	
-	for(i=0; i < 3; i++) {
+	for(i=0; i < 6; i++) {
 		printf(" %d |", i);
-		for ( j = 0; j < 3; j++) 
+		for ( j = 0; j < 7; j++) 
 			printf(" %c |", etat->plateau[i][j]);
 		printf("\n");
-		printf("----------------");
+		printf("--------------------------------");
 		printf("\n");
 	}
 }
@@ -166,8 +166,8 @@ Coup ** coups_possibles( Etat * etat ) {
 	
 	/* par exemple */
 	int i,j;
-	for(i=0; i < 3; i++) {
-		for (j=0; j < 3; j++) {
+	for(i=0; i < 6; i++) {
+		for (j=0; j < 7; j++) {
 			if ( etat->plateau[i][j] == ' ' ) {
 				coups[k] = nouveauCoup(i,j); 
 				k++;
@@ -262,43 +262,46 @@ FinDePartie testFin( Etat * etat ) {
 	
 	// tester si un joueur a gagné
 	int i,j,k,n = 0;
-	for ( i=0;i < 3; i++) {
-		for(j=0; j < 3; j++) {
+	for ( i=0;i < 6; i++) {
+		for(j=0; j < 7; j++) {
 			if ( etat->plateau[i][j] != ' ') {
 				n++;	// nb coups joués
 			
 				// lignes
 				k=0;
-				while ( k < 3 && i+k < 3 && etat->plateau[i+k][j] == etat->plateau[i][j] ) 
+				while ( k < 4 && i+k < 6 && etat->plateau[i+k][j] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
 
 				// colonnes
 				k=0;
-				while ( k < 3 && j+k < 3 && etat->plateau[i][j+k] == etat->plateau[i][j] ) 
+				while ( k < 4 && j+k < 7 && etat->plateau[i][j+k] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
 
 				// diagonales
+				/*
 				k=0;
 				while ( k < 3 && i+k < 3 && j+k < 3 && etat->plateau[i+k][j+k] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
 
 				k=0;
 				while ( k < 3 && i+k < 3 && j-k >= 0 && etat->plateau[i+k][j-k] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;		
+				
+				*/
 			}
 		}
 	}
 
 	// et sinon tester le match nul	
-	if ( n == 3*3 ) 
+	if ( n == 7*6 ) 
 		return MATCHNUL;
 		
 	return NON;
