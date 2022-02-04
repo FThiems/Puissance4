@@ -1,4 +1,5 @@
 /*
+
 	Canvas pour algorithmes de jeux à 2 joueurs
 	
 	joueur 0 : humain
