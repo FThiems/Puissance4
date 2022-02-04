@@ -80,7 +80,7 @@ Etat * etat_initial( void ) {
 	return etat;
 }
 
-
+//affichage du jeu
 void afficheJeu(Etat * etat) {
 
 	// TODO: à compléter
