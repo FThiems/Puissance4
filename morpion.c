@@ -60,7 +60,7 @@ Etat * etat_intial() {
 	return etat;
 }
 //Affichage du jeu
-void affiche_jeu(Etat * etat)
+void affiche_jeu(Etat * etat) {
 	int i,j;
 	printf("  |");
 	for (j=0; j<3; j++)
