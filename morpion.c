@@ -49,9 +49,35 @@ Etat * copieEtat(Etat * src){
 }
 
 //Etat initial
+Etat * etat_intial() {
+	Etat * e = (Etat *)malloc(sizeof(Etat));
 
+	int i,j;
+	for(i=0; i<3; i++)
+		for(j=0;j<3;j++)
+			etat->plateau[i][j] = ' ';
+
+	return etat;
+}
 //Affichage du jeu
+void affiche_jeu(Etat * etat)
+	int i,j;
+	printf("  |");
+	for (j=0; j<3; j++)
+		printf(" %d |", j); 
+	printf("\n");
+	printf("----------------");
+	printf("\n");
 
+	for(i=0;i<3;i++) {
+		printf(" %d |", i);
+		for (j = 0; j<3; j++)
+			printf(" %c |", etat->plateau[i][j]);
+		printf("\n");
+		printf("----------------");
+		printf("\n");
+	}
+}
 //Nouveau coup
 
 //Demande de coup au joueur humain
@@ -75,7 +101,11 @@ Etat * copieEtat(Etat * src){
 // Calcule et joue un coup de l'ordinateur avec MCTS-UCT
 // en tempsmax secondes
 
+int main(){
+	affiche_jeu(etat_intial());
+}
 
+/**
 int main(void) {
 
 	Coup * coup;
@@ -122,3 +152,4 @@ int main(void) {
 		printf( "** BRAVO, l'ordinateur a perdu  **\n");
 	return 0;
 }
+**/
