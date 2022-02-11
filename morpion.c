@@ -78,11 +78,37 @@ void affiche_jeu(Etat * etat) {
 		printf("\n");
 	}
 }
+
 //Nouveau coup
+Coup * nouveauCoup( int i, int j ){
+	Coup * c = (Coup *)malloc(sizeof(Coup));
+	c->ligne = i;
+	c->col = j;
+
+	return c;
+}
 
 //Demande de coup au joueur humain
+Coup * demanderCoup(){
+	int i,j;
+	printf("\n quelle ligne ? ");
+	scanf("%d",&i);
+	printf("\n quelle colonne ? ");
+	scanf("%d",&j);
 
-//Copie d'etat
+	return nouveauCoup(i,j);
+}
+//Modifie l'etat en jouant un coup
+int jouerCoup( Etat * e, Coup * c){
+	if(e->plateau[c->ligne][c->col] != ' ' )
+		return 0;
+	else {
+		e->plateau[c->ligne][c->col] = e->joueur ? 'O' : 'X';
+		e->joueur = AUTRE_JOUEUR(e->joueur);
+
+		return 1;
+	}
+}
 
 // Retourne une liste de coups possibles à partir d'un etat 
 // (tableau de pointeurs de coups se terminant par NULL)
@@ -104,7 +130,6 @@ void affiche_jeu(Etat * etat) {
 int main(){
 	affiche_jeu(etat_intial());
 }
-
 /**
 int main(void) {
 
