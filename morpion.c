@@ -55,9 +55,9 @@ Etat * etat_intial() {
 	int i,j;
 	for(i=0; i<3; i++)
 		for(j=0;j<3;j++)
-			etat->plateau[i][j] = ' ';
+			e->plateau[i][j] = ' ';
 
-	return etat;
+	return e;
 }
 //Affichage du jeu
 void affiche_jeu(Etat * etat) {
