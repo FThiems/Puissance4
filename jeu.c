@@ -41,6 +41,7 @@ typedef struct {
 	// TODO: à compléter par la définition d'un coup 
 
 	/* par exemple, pour morpion: */
+	//int ligne;
 	int ligne;
 	int colonne;
 
@@ -108,7 +109,7 @@ void afficheJeu(Etat * etat) {
 
 // Nouveau coup 
 // TODO: adapter la liste de paramètres au jeu
-Coup * nouveauCoup( int i, int j ) {
+Coup * nouveauCoup(int i, int j ) {
 	Coup * coup = (Coup *)malloc(sizeof(Coup));
 	
 	// TODO: à compléter avec la création d'un nouveau coup
@@ -127,31 +128,66 @@ Coup * demanderCoup () {
 
 	/* par exemple : */
 	int i,j;
-	printf("\n quelle ligne ? ") ;
-	scanf("%d",&i); 
+
+	printf(" quelle ligne ? ") ;
+	scanf("%d",&i);
 	printf(" quelle colonne ? ") ;
 	scanf("%d",&j); 
 	
 	return nouveauCoup(i,j);
 }
 
+static int nombre = 0;
 // Modifier l'état en jouant un coup 
 // retourne 0 si le coup n'est pas possible
 int jouerCoup( Etat * etat, Coup * coup ) {
 
+	printf("Nombre vaut : %d \n", nombre);
+	nombre++;
 	// TODO: à compléter
 	
 	/* par exemple : */
-	if ( etat->plateau[coup->ligne][coup->colonne] != ' ' )
-		return 0;
-	else {
-		etat->plateau[coup->ligne][coup->colonne] = etat->joueur ? 'O' : 'X';
-		
-		// à l'autre joueur de jouer
-		etat->joueur = AUTRE_JOUEUR(etat->joueur); 	
 
-		return 1;
-	}	
+	//Cas ou on est dans la ligne du bas 
+	
+	if( (coup->ligne) == 5){
+		printf("Cas dernière ligne \n");
+		if ( etat->plateau[coup->ligne][coup->colonne] != ' ' ){
+			printf("Cas dernière ligne + case déja remplie \n");
+			return 0;
+		}else{
+			printf("Cas dernière ligne + on rempli\n");
+			etat->plateau[coup->ligne][coup->colonne] = etat->joueur ? 'O' : 'X';
+		
+			// à l'autre joueur de jouer
+			etat->joueur = AUTRE_JOUEUR(etat->joueur); 	
+
+			return 1;
+
+		}
+
+	}else{
+		printf("Cas ou on n'est pas dans la dernière ligne \n");
+
+		if ( etat->plateau[coup->ligne][coup->colonne] != ' ' ){
+			printf("Cas non dernière ligne + case déja remplie\n");
+			return 0;
+		}else {
+				
+			if ( etat->plateau[ (coup->ligne )-1][coup->colonne] = ' ' ){
+				printf("Cas non dernière ligne + case du bas vide \n");
+				return 0;
+			}else{
+				printf("Cas non dernière ligne + On remplie\n");
+				etat->plateau[coup->ligne][coup->colonne] = etat->joueur ? 'O' : 'X';
+		
+				// à l'autre joueur de jouer
+				etat->joueur = AUTRE_JOUEUR(etat->joueur); 	
+
+				return 1;
+			}
+		}	
+	}
 }
 
 // Retourne une liste de coups possibles à partir d'un etat 
@@ -166,12 +202,16 @@ Coup ** coups_possibles( Etat * etat ) {
 	
 	/* par exemple */
 	int i,j;
-	for(i=0; i < 6; i++) {
-		for (j=0; j < 7; j++) {
+
+	for(j=0; j < 7; j++) {
+		for (i=5; -1 < i; i--) {
+			
 			if ( etat->plateau[i][j] == ' ' ) {
 				coups[k] = nouveauCoup(i,j); 
 				k++;
+				i = -2;
 			}
+			
 		}
 	}
 	/* fin de l'exemple */
@@ -393,8 +433,10 @@ int main(void) {
 		else {
 			// tour de l'Ordinateur
 			
-			ordijoue_mcts( etat, TEMPS );
-			
+			//ordijoue_mcts( etat, TEMPS );
+			coups_possibles(etat);
+			coup = demanderCoup();
+			jouerCoup(etat, coup);
 		}
 		
 		fin = testFin( etat );
