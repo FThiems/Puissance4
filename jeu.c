@@ -174,10 +174,9 @@ int jouerCoup( Etat * etat, Coup * coup ) {
 			return 0;
 		}else {
 				
-			if ( etat->plateau[ (coup->ligne )-1][coup->colonne] = ' ' ){
-				printf("Cas non dernière ligne + case du bas vide \n");
-				return 0;
-			}else{
+			if ( etat->plateau[ (coup->ligne )+ 1][coup->colonne] != ' '){
+				
+
 				printf("Cas non dernière ligne + On remplie\n");
 				etat->plateau[coup->ligne][coup->colonne] = etat->joueur ? 'O' : 'X';
 		
@@ -185,6 +184,10 @@ int jouerCoup( Etat * etat, Coup * coup ) {
 				etat->joueur = AUTRE_JOUEUR(etat->joueur); 	
 
 				return 1;
+			}else{
+				printf("La case ligne %d et colonne %d  est vide\n", (coup->ligne+1), coup->colonne);
+				printf("Cas non dernière ligne + case du bas vide \n");
+				return 0;
 			}
 		}	
 	}
@@ -200,7 +203,7 @@ Coup ** coups_possibles( Etat * etat ) {
 	
 	// TODO: à compléter
 	
-	/* par exemple */
+	/* par exemple */ 
 	int i,j;
 
 	for(j=0; j < 7; j++) {
