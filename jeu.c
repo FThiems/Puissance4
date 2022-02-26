@@ -206,6 +206,7 @@ Coup ** coups_possibles( Etat * etat ) {
 	/* par exemple */ 
 	int i,j;
 
+	//Boucle pour trouver les coups jouables 
 	for(j=0; j < 7; j++) {
 		for (i=5; -1 < i; i--) {
 			
@@ -348,7 +349,24 @@ FinDePartie testFin( Etat * etat ) {
 	return NON;
 }
 
+//Fonction de selection, Etape 1 de MCTS
+//Pas fini de l'écrire 
+Noeud * selection(Noeud * racine) {
+   
+    Noeud * noeud_actuel = racine;
+	
+	//Condition d'arrêt de la récursion
+	// if( nœud terminal ou un avec un fils non développé )
 
+	Noeud * noeud_val_b_max;
+
+	for(int i = 0; noeud_actuel->nb_enfants ; i++){
+		//On doit parcourir les enfants du noeud, calculer la B-valeur de chaque noeud et comparer pour choisir quelle noeud return
+	}
+   
+    // On appelle récursivement la fonction sur le noeud de B-valeur maximale déterminé précédement
+    return selection_rec(noeud_val_b_max);
+}
 
 // Calcule et joue un coup de l'ordinateur avec MCTS-UCT
 // en tempsmax secondes
@@ -375,29 +393,49 @@ void ordijoue_mcts(Etat * etat, int tempsmax) {
 	}
 	
 	
-	meilleur_coup = coups[ rand()%k ]; // choix aléatoire
+	// meilleur_coup = coups[ rand()%k ]; // choix aléatoire
 	
 	/*  TODO :
 		- supprimer la sélection aléatoire du meilleur coup ci-dessus
 		- implémenter l'algorithme MCTS-UCT pour déterminer le meilleur coup ci-dessous
+	
+	*/
 
 	int iter = 0;
 	
 	do {
+
+		//Etape 1
+		//Sélectionner récursivement à partir de la racine le nœud avec la plus grande B-valeur jusqu’à un nœud terminal ou un avec un fils non développé
+
+		//Noeud * select = selection_rec(racine);
+
+
+
+		//Etape2
+		//Développer le nœud sélectionné (si nécessaire) et sélectionner aléatoirement un fils parmi les fils non explorés (ou le nœud lui-même s’il est terminal)
 	
-	
-	
-		// à compléter par l'algorithme MCTS-UCT... 
-	
-	
-	
-	
+		// Reste à écrire la fonction developper_noeud
+
+
+		//Etape3
+		//Simuler la fin de la partie avec une marche aléatoire
+		
+		//Reste à écrire la fonction simuler_fin_de_partier
+
+
+		//Etape4
+		//Mettre à jour les B-valeurs de tous les nœuds sur le chemin de la racine au nœud sélectionné en remontant la récompense r de la position finale
+		// B(i) = µ(i) + c * sqrt( ln * N(parent(i)) / N(i) )
+
+		
 		toc = clock(); 
 		temps = (int)( ((double) (toc - tic)) / CLOCKS_PER_SEC );
 		iter ++;
 	} while ( temps < tempsmax );
 	
-	*/
+	
+
 	/* fin de l'algorithme  */ 
 	
 	// Jouer le meilleur premier coup
