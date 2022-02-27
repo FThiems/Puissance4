@@ -1,5 +1,5 @@
-main:
-	gcc -Wextra -Wall morpion.c -o main
+main: jeu.c
+	gcc -Wextra -Wall jeu.c -o main
 
 clean: 
 	rm -rf *.o

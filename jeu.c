@@ -11,9 +11,10 @@
 #include <time.h>
 
 // Paramètres du jeu
-#define LARGEUR_MAX 9 		// nb max de fils pour un noeud (= nb max de coups possibles)
-
+#define LARGEUR_MAX 7 		// nb max de fils pour un noeud (= nb max de coups possibles)
 #define TEMPS 5		// temps de calcul pour un coup avec MCTS (en secondes)
+#define HEIGHT 6
+#define WIDTH 7
  
 // macros
 #define AUTRE_JOUEUR(i) (1-(i))
@@ -28,19 +29,12 @@ typedef struct EtatSt {
 
 	int joueur; // à qui de jouer ? 
 
-	// TODO: à compléter par la définition de l'état du jeu
-
-	/* par exemple, pour morpion: */
-	char plateau[3][3];	
+	char plateau[HEIGHT][WIDTH];
 
 } Etat;
 
 // Definition du type Coup
 typedef struct {
-	// TODO: à compléter par la définition d'un coup 
-
-	/* par exemple, pour morpion: */
-	int ligne;
 	int colonne;
 
 } Coup;
@@ -51,16 +45,10 @@ Etat * copieEtat( Etat * src ) {
 
 	etat->joueur = src->joueur;
 	
-		
-	// TODO: à compléter avec la copie de l'état src dans etat
-	
-	/* par exemple : */
 	int i,j;	
-	for (i=0; i< 3; i++)
-		for ( j=0; j<3; j++)
+	for (i=0; i< HEIGHT; i++)
+		for ( j=0; j<WIDTH; j++)
 			etat->plateau[i][j] = src->plateau[i][j];
-	
-
 	
 	return etat;
 }
@@ -69,12 +57,9 @@ Etat * copieEtat( Etat * src ) {
 Etat * etat_initial( void ) {
 	Etat * etat = (Etat *)malloc(sizeof(Etat));
 	
-	// TODO: à compléter avec la création de l'état initial
-	
-	/* par exemple : */
 	int i,j;	
-	for (i=0; i< 3; i++)
-		for ( j=0; j<3; j++)
+	for (i=0; i< HEIGHT; i++)
+		for ( j=0; j<WIDTH; j++)
 			etat->plateau[i][j] = ' ';
 	
 	return etat;
@@ -83,22 +68,21 @@ Etat * etat_initial( void ) {
 //affichage du jeu
 void afficheJeu(Etat * etat) {
 
-	// TODO: à compléter
-
-	/* par exemple : */
 	int i,j;
 	printf("   |");
-	for ( j = 0; j < 3; j++) 
+	for ( j = 0; j < WIDTH; j++) 
 		printf(" %d |", j);
 	printf("\n");
 	printf("----------------");
+	printf("----------------");
 	printf("\n");
 	
-	for(i=0; i < 3; i++) {
+	for(i=0; i < HEIGHT; i++) {
 		printf(" %d |", i);
-		for ( j = 0; j < 3; j++) 
+		for ( j = 0; j < WIDTH; j++) 
 			printf(" %c |", etat->plateau[i][j]);
 		printf("\n");
+		printf("----------------");
 		printf("----------------");
 		printf("\n");
 	}
@@ -107,14 +91,10 @@ void afficheJeu(Etat * etat) {
 
 // Nouveau coup 
 // TODO: adapter la liste de paramètres au jeu
-Coup * nouveauCoup( int i, int j ) {
+Coup * nouveauCoup( int i) {
 	Coup * coup = (Coup *)malloc(sizeof(Coup));
 	
-	// TODO: à compléter avec la création d'un nouveau coup
-	
-	/* par exemple : */
-	coup->ligne = i;
-	coup->colonne = j;
+	coup->colonne = i;
 	
 	return coup;
 }
@@ -122,29 +102,29 @@ Coup * nouveauCoup( int i, int j ) {
 // Demander à l'humain quel coup jouer 
 Coup * demanderCoup () {
 
-	// TODO...
-
-	/* par exemple : */
-	int i,j;
-	printf("\n quelle ligne ? ") ;
-	scanf("%d",&i); 
+	int i;
 	printf(" quelle colonne ? ") ;
-	scanf("%d",&j); 
+	scanf("%d",&i); 
 	
-	return nouveauCoup(i,j);
+	return nouveauCoup(i);
 }
 
 // Modifier l'état en jouant un coup 
 // retourne 0 si le coup n'est pas possible
 int jouerCoup( Etat * etat, Coup * coup ) {
 
-	// TODO: à compléter
-	
-	/* par exemple : */
-	if ( etat->plateau[coup->ligne][coup->colonne] != ' ' )
+	//Le coup est impossible si il sort des limites ou si la colonne est remplie
+	if ( etat->plateau[0][coup->colonne] != ' ' || coup->colonne >= WIDTH || coup->colonne < 0)
 		return 0;
 	else {
-		etat->plateau[coup->ligne][coup->colonne] = etat->joueur ? 'O' : 'X';
+		int i = WIDTH-1; //Ligne du bas
+		
+		//Tant que on ne trouve pas de case vide on remonte la colonne
+		while(etat->plateau[i][coup->colonne] != ' '){
+			i--;
+		}
+
+		etat->plateau[i][coup->colonne] = etat->joueur ? 'O' : 'X';
 		
 		// à l'autre joueur de jouer
 		etat->joueur = AUTRE_JOUEUR(etat->joueur); 	
@@ -161,20 +141,15 @@ Coup ** coups_possibles( Etat * etat ) {
 	
 	int k = 0;
 	
-	// TODO: à compléter
-	
-	/* par exemple */
-	int i,j;
-	for(i=0; i < 3; i++) {
-		for (j=0; j < 3; j++) {
-			if ( etat->plateau[i][j] == ' ' ) {
-				coups[k] = nouveauCoup(i,j); 
-				k++;
-			}
+	//Si la première case de la colonne est disponible alors le coup est possible
+	int i;
+	for(i= 0; i<LARGEUR_MAX; i++){
+		if(etat->plateau[0][i] == ' ') {
+			coups[k] = nouveauCoup(i);
+			k++;
 		}
 	}
-	/* fin de l'exemple */
-	
+
 	coups[k] = NULL;
 
 	return coups;
@@ -261,43 +236,45 @@ FinDePartie testFin( Etat * etat ) {
 	
 	// tester si un joueur a gagné
 	int i,j,k,n = 0;
-	for ( i=0;i < 3; i++) {
-		for(j=0; j < 3; j++) {
+	for ( i=0;i < WIDTH; i++) {
+		for(j=0; j < HEIGHT; j++) {
 			if ( etat->plateau[i][j] != ' ') {
 				n++;	// nb coups joués
 			
-				// lignes
-				k=0;
-				while ( k < 3 && i+k < 3 && etat->plateau[i+k][j] == etat->plateau[i][j] ) 
-					k++;
-				if ( k == 3 ) 
-					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
-
 				// colonnes
 				k=0;
-				while ( k < 3 && j+k < 3 && etat->plateau[i][j+k] == etat->plateau[i][j] ) 
+				while ( k < 4 && i+k < WIDTH && etat->plateau[i+k][j] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
 
+				// lignes
+				k=0;
+				while ( k < 4 && j+k < HEIGHT && etat->plateau[i][j+k] == etat->plateau[i][j] ) {
+					k++;
+					printf("j:%d k:%d\n", j, k);
+				}
+				if ( k == 4 ) 
+					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
+				
 				// diagonales
 				k=0;
-				while ( k < 3 && i+k < 3 && j+k < 3 && etat->plateau[i+k][j+k] == etat->plateau[i][j] ) 
+				while ( k < 4 && i+k < WIDTH && j+k < HEIGHT && etat->plateau[i+k][j+k] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;
 
 				k=0;
-				while ( k < 3 && i+k < 3 && j-k >= 0 && etat->plateau[i+k][j-k] == etat->plateau[i][j] ) 
+				while ( k < 4 && i+k < WIDTH && j-k >= 0 && etat->plateau[i+k][j-k] == etat->plateau[i][j] ) 
 					k++;
-				if ( k == 3 ) 
+				if ( k == 4 ) 
 					return etat->plateau[i][j] == 'O'? ORDI_GAGNE : HUMAIN_GAGNE;		
 			}
 		}
 	}
 
 	// et sinon tester le match nul	
-	if ( n == 3*3 ) 
+	if ( n == 6*7 ) 
 		return MATCHNUL;
 		
 	return NON;
@@ -370,7 +347,6 @@ int main(void) {
 	
 	// initialisation
 	Etat * etat = etat_initial(); 
-	
 	// Choisir qui commence : 
 	printf("Qui commence (0 : humain, 1 : ordinateur) ? ");
 	scanf("%d", &(etat->joueur) );
